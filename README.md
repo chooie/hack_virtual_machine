@@ -1,6 +1,4 @@
-# Deno Starter
-
-This is a start point for a Deno project
+# Hack Virtual Machine
 
 ## Dependencies
 
