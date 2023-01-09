@@ -1,0 +1,11 @@
+{
+  "imports": {
+    "~/": "./",
+    "@/": "./src/app/",
+    "@deps": "./third_party_dependencies/deps.ts",
+    "@deps/": "./third_party_dependencies/deps/",
+    "@test_deps": "./third_party_dependencies/test_deps.ts",
+    "@test_deps/": "./third_party_dependencies/test_deps/",
+    "@utils/": "./src/app/utilities/"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    // Cache all the dependencies
+    "cache-deps": "deno cache third_party_dependencies/deps.ts && deno cache third_party_dependencies/test_deps.ts",
+    "start": "deno run --allow-read --allow-write src/app/run.ts",
+    "start-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task start'",
+    "check-all": "deno lint && deno check src/app/run.ts && deno test --allow-read --allow-write --cached-only --fail-fast && deno task check-smoke",
+    "check-all-watch": "deno run --allow-read --allow-run src/build_tools/watcher.ts 'deno task check-all'",
+    "check-smoke": "deno test --allow-read --allow-write --allow-run --cached-only --fail-fast src/app/_run_test.smoke.ts",
+    "make-binary": "deno compile --allow-read --allow-write --output=run ./src/app/run.ts"
+  },
+  "importMap": "import_map.json"
+}
