@@ -3,3 +3,4 @@
 **/*.asm
 !**/*.KEEP.asm
 virtual_machine
+test.vm

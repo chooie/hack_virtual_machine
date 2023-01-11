@@ -47,23 +47,37 @@ describe(test, "Logical/arithmetic commands", () => {
       }),
       multiline.stripIndent`
         // neg
-        // pop off stack
         @SP
-        // pop off stack (SP--)
-        M=M-1
-        A=M
+        A=M-1
+        M=-M
+      `,
+    );
+  });
+
+  it("handles eq", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "eq",
+      }),
+      multiline.stripIndent`
+        // eq
+        @SP
+        AM=M-1
         D=M
-        @R13 // Store this temporarily
-        M=D
-        // do -M operation and store it in D
-        @R13
-        D=-M
-        // push it back onto the stack
+        A=A-1
+        D=M-D
+        @CASE_EQUAL_0
+        D;JEQ
         @SP
-        A=M
-        M=D
+        A=M-1
+        M=0
+        @END_CASE_HANDLING_1
+        0;JMP
+        (CASE_EQUAL_0)
         @SP
-        M=M+1
+        A=M-1
+        M=1
+        (END_CASE_HANDLING_1)
       `,
     );
   });

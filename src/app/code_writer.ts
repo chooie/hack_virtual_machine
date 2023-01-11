@@ -32,6 +32,8 @@ import * as multiline from "@utils/multiline.ts";
 
 import * as parser from "./parser.ts";
 
+let labelCount = 0;
+
 export function writeCommand(
   parsedCommand:
     | parser.ArithmeticOrLogicalCommandResult
@@ -68,28 +70,41 @@ export function writeCommand(
   if (command === "neg") {
     return multiline.stripIndent`
       // neg
-      // pop off stack
       @SP
-      // pop off stack (SP--)
-      M=M-1
-      A=M
+      A=M-1
+      M=-M
+    `;
+  }
+
+  if (command === "eq") {
+    const caseEqualLabel = `CASE_EQUAL_${labelCount}`;
+    labelCount++;
+    const endCaseLabel = `END_CASE_HANDLING_${labelCount}`;
+    labelCount++;
+
+    return multiline.stripIndent`
+      // eq
+      @SP
+      AM=M-1
       D=M
-      @R13 // Store this temporarily
-      M=D
-      // do -M operation and store it in D
-      @R13
-      D=-M
-      // push it back onto the stack
+      A=A-1
+      D=M-D
+      @${caseEqualLabel}
+      D;JEQ
       @SP
-      A=M
-      M=D
+      A=M-1
+      M=0
+      @${endCaseLabel}
+      0;JMP
+      (${caseEqualLabel})
       @SP
-      M=M+1
+      A=M-1
+      M=1
+      (${endCaseLabel})
     `;
   }
 
   /*
-  "eq",
   "gt",
   "lt",
   "and",
