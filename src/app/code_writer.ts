@@ -46,6 +46,28 @@ export function writeCommand(
   if (command === "add") {
     return multiline.stripIndent`
       // add
+      @SP
+      AM=M-1
+      D=M
+      A=A-1
+      M=D+M
+    `;
+  }
+
+  if (command === "sub") {
+    return multiline.stripIndent`
+      // sub
+      @SP
+      AM=M-1
+      D=M
+      A=A-1
+      M=M-D
+    `;
+  }
+
+  if (command === "neg") {
+    return multiline.stripIndent`
+      // neg
       // pop off stack
       @SP
       // pop off stack (SP--)
@@ -54,14 +76,9 @@ export function writeCommand(
       D=M
       @R13 // Store this temporarily
       M=D
-      // Pop another off the stack
-      @SP
-      M=M-1
-      A=M
-      D=M
-      // do add operation
+      // do -M operation and store it in D
       @R13
-      D=D+M
+      D=-M
       // push it back onto the stack
       @SP
       A=M
@@ -70,6 +87,15 @@ export function writeCommand(
       M=M+1
     `;
   }
+
+  /*
+  "eq",
+  "gt",
+  "lt",
+  "and",
+  "or",
+  "not",
+  */
 
   return `// ${command}`;
 }

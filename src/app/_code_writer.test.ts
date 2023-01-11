@@ -15,6 +15,38 @@ describe(test, "Logical/arithmetic commands", () => {
       }),
       multiline.stripIndent`
         // add
+        @SP
+        AM=M-1
+        D=M
+        A=A-1
+        M=D+M
+      `,
+    );
+  });
+
+  it("handles sub", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "sub",
+      }),
+      multiline.stripIndent`
+        // sub
+        @SP
+        AM=M-1
+        D=M
+        A=A-1
+        M=M-D
+      `,
+    );
+  });
+
+  it("handles neg", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "neg",
+      }),
+      multiline.stripIndent`
+        // neg
         // pop off stack
         @SP
         // pop off stack (SP--)
@@ -23,14 +55,9 @@ describe(test, "Logical/arithmetic commands", () => {
         D=M
         @R13 // Store this temporarily
         M=D
-        // Pop another off the stack
-        @SP
-        M=M-1
-        A=M
-        D=M
-        // do add operation
+        // do -M operation and store it in D
         @R13
-        D=D+M
+        D=-M
         // push it back onto the stack
         @SP
         A=M
