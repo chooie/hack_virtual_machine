@@ -104,8 +104,35 @@ export function writeCommand(
     `;
   }
 
+  if (command === "gt") {
+    const caseGreaterThan = `CASE_GREATER_THAN_${labelCount}`;
+    labelCount++;
+    const endCaseLabel = `END_CASE_HANDLING_${labelCount}`;
+    labelCount++;
+
+    return multiline.stripIndent`
+      // gt
+      @SP
+      AM=M-1
+      D=M
+      A=A-1
+      D=M-D
+      @${caseGreaterThan}
+      D;JGT
+      @SP
+      A=M-1
+      M=0
+      @${endCaseLabel}
+      0;JMP
+      (${caseGreaterThan})
+      @SP
+      A=M-1
+      M=1
+      (${endCaseLabel})
+    `;
+  }
+
   /*
-  "gt",
   "lt",
   "and",
   "or",

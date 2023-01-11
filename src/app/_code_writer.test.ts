@@ -8,7 +8,7 @@ import * as codeWriter from "./code_writer.ts";
 const test = describe("Code Writer");
 
 describe(test, "Logical/arithmetic commands", () => {
-  it("handles add", () => {
+  it("add", () => {
     assertStrictEquals(
       codeWriter.writeCommand({
         command: "add",
@@ -24,7 +24,7 @@ describe(test, "Logical/arithmetic commands", () => {
     );
   });
 
-  it("handles sub", () => {
+  it("sub", () => {
     assertStrictEquals(
       codeWriter.writeCommand({
         command: "sub",
@@ -40,7 +40,7 @@ describe(test, "Logical/arithmetic commands", () => {
     );
   });
 
-  it("handles neg", () => {
+  it("neg", () => {
     assertStrictEquals(
       codeWriter.writeCommand({
         command: "neg",
@@ -54,7 +54,7 @@ describe(test, "Logical/arithmetic commands", () => {
     );
   });
 
-  it("handles eq", () => {
+  it("eq", () => {
     assertStrictEquals(
       codeWriter.writeCommand({
         command: "eq",
@@ -81,10 +81,40 @@ describe(test, "Logical/arithmetic commands", () => {
       `,
     );
   });
+
+  it("gt", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "gt",
+      }),
+      multiline.stripIndent`
+        // gt
+        @SP
+        AM=M-1
+        D=M
+        A=A-1
+        D=M-D
+        @CASE_GREATER_THAN_2
+        D;JGT
+        @SP
+        A=M-1
+        M=0
+        @END_CASE_HANDLING_3
+        0;JMP
+        (CASE_GREATER_THAN_2)
+        @SP
+        A=M-1
+        M=1
+        (END_CASE_HANDLING_3)
+      `,
+    );
+  });
 });
 
 describe(test, "Segment commands", () => {
   describe("constant", () => {
+    // TODO: handle negative numbers
+
     it("push", () => {
       assertStrictEquals(
         codeWriter.writeCommand({
