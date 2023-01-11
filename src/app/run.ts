@@ -1,5 +1,4 @@
-// import * as file from "./utilities/file.ts";
-
+import * as file from "@utils/file.ts";
 import * as multiline from "@utils/multiline.ts";
 
 import * as parser from "./parser.ts";
@@ -8,32 +7,29 @@ import * as codeWriter from "./code_writer.ts";
 // WARNING: this file is the main run file. It is only called from the command
 // line and must NOT be imported by any other module
 
-const vmCode = multiline.stripIndent`
-  push constant 2
-  push constant 3
-  add
-`;
+const filePath = Deno.args[0];
 
-console.log(convertVmCode(vmCode));
+if (!filePath) {
+  throw new Error("You must pass a filePath");
+}
 
-// const filePath = Deno.args[0];
+if (filePath === "") {
+  throw new Error("filePath must not be empty");
+}
 
-// if (!filePath) {
-//   throw new Error("You must pass a filePath");
-// }
+const sourceCode = await file.readTextFile(filePath);
 
-// if (filePath === "") {
-//   throw new Error("filePath must not be empty");
-// }
+if (file.isReadTextFileError(sourceCode)) {
+  throw new Error(JSON.stringify(sourceCode, undefined, 2));
+}
 
-// const sourceCode = await file.readTextFile(filePath);
+console.log("Reading file");
+console.log(sourceCode);
 
-// if (file.isReadTextFileError(sourceCode)) {
-//   throw new Error(JSON.stringify(sourceCode, undefined, 2));
-// }
+const vmCode = convertVmCode(sourceCode);
 
-// console.log("Reading file");
-// console.log(sourceCode);
+const destinationFilePath = file.getDestinationFilePath(filePath, ".asm");
+await file.writeTextFile(destinationFilePath, vmCode);
 
 function convertVmCode(code: string) {
   const parsedCommands = parser.parse(code);

@@ -1,25 +1,26 @@
 import { assertStrictEquals } from "@test_deps/assert.ts";
 import { describe, it } from "@test_deps/bdd.ts";
 
-// import * as file from "./file.ts";
+import * as file from "@utils/file.ts";
 
 describe("Run smoke test", () => {
   it("can run the run.ts file", async () => {
-    // await runCommand("rm -f ./src/app/test_files/Pong.hack");
+    const addVmFilePath = "./src/app/test_files/add.vm";
+    const generatedAssemblyFilePath = "./src/app/test_files/add.asm";
 
-    const status = await runCommand(
-      "deno run --allow-read --allow-write ./src/app/run.ts ./src/app/test_files/file.txt",
-    );
+    await runCommand(`rm -f ${generatedAssemblyFilePath}`);
+
+    const status = await runCommand(`deno task start ${addVmFilePath}`);
     assertStrictEquals(status.success, true);
 
-    // const generatedFileContents = await file.readTextFile(
-    //   "./src/app/test_files/Pong.hack",
-    // );
-    // const expectedFileContents = await file.readTextFile(
-    //   "./src/app/test_files/Pong.hack",
-    // );
+    const generatedFileContents = await file.readTextFile(
+      generatedAssemblyFilePath,
+    );
+    const expectedFileContents = await file.readTextFile(
+      "./src/app/test_files/add.KEEP.asm",
+    );
 
-    // assertStrictEquals(generatedFileContents, expectedFileContents);
+    assertStrictEquals(generatedFileContents, expectedFileContents);
   });
 });
 
