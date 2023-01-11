@@ -27,17 +27,22 @@ const segments = [
 ] as const;
 type Segment = typeof segments[number];
 
-type PushOrPopCommandResult = {
+export type PushOrPopCommandResult = {
   command: "push" | "pop";
   segment: Segment;
   value: number;
 };
 
-type ArithmeticOrLogicalCommandResult = {
+export type ArithmeticOrLogicalCommandResult = {
   command: ArithmeticOrLogicalCommand;
 };
 
-export function parse(
+export function parse(lineCommands: string) {
+  const lines = lineCommands.split("\n");
+  return lines.map(parseLine);
+}
+
+export function parseLine(
   lineCommand: string,
 ): PushOrPopCommandResult | ArithmeticOrLogicalCommandResult {
   const words = lineCommand.split(" ");
@@ -90,7 +95,7 @@ function isAValidCommand(command: string): command is Command {
   return commands.includes(command as Command);
 }
 
-function isAValidArithmeticOrLogicalCommand(
+export function isAValidArithmeticOrLogicalCommand(
   command: string,
 ): command is ArithmeticOrLogicalCommand {
   return arithmeticOrLogicalCommands.includes(

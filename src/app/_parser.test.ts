@@ -1,6 +1,8 @@
 import { assertEquals, assertThrows } from "@test_deps/assert.ts";
 import { describe, it } from "@test_deps/bdd.ts";
 
+import * as multiline from "@utils/multiline.ts";
+
 import * as parser from "./parser.ts";
 
 /*
@@ -34,14 +36,39 @@ add
 */
 
 describe("Parser", () => {
+  it("parses multiple lines", () => {
+    const actual = parser.parse(
+      multiline.stripIndent`
+        push constant 2
+        push constant 3
+        add
+      `,
+    );
+    assertEquals(actual, [
+      {
+        command: "push",
+        segment: "constant",
+        value: 2,
+      },
+      {
+        command: "push",
+        segment: "constant",
+        value: 3,
+      },
+      {
+        command: "add",
+      },
+    ]);
+  });
+
   it("parses pushes", () => {
-    assertEquals(parser.parse("push constant 10"), {
+    assertEquals(parser.parseLine("push constant 10"), {
       command: "push",
       segment: "constant",
       value: 10,
     });
 
-    assertEquals(parser.parse("push local 0"), {
+    assertEquals(parser.parseLine("push local 0"), {
       command: "push",
       segment: "local",
       value: 0,
@@ -49,13 +76,13 @@ describe("Parser", () => {
   });
 
   it("parses pops", () => {
-    assertEquals(parser.parse("pop local 0"), {
+    assertEquals(parser.parseLine("pop local 0"), {
       command: "pop",
       segment: "local",
       value: 0,
     });
 
-    assertEquals(parser.parse("pop argument 2"), {
+    assertEquals(parser.parseLine("pop argument 2"), {
       command: "pop",
       segment: "argument",
       value: 2,
@@ -63,11 +90,11 @@ describe("Parser", () => {
   });
 
   it("parses arithmetic/logical commands", () => {
-    assertEquals(parser.parse("add"), {
+    assertEquals(parser.parseLine("add"), {
       command: "add",
     });
 
-    assertEquals(parser.parse("sub"), {
+    assertEquals(parser.parseLine("sub"), {
       command: "sub",
     });
   });
@@ -75,7 +102,7 @@ describe("Parser", () => {
   it("fails on bad commands", () => {
     assertThrows(
       () => {
-        parser.parse("foo");
+        parser.parseLine("foo");
       },
       Error,
       "Command not implemented, 'foo'",
