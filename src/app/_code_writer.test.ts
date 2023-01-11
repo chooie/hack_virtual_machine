@@ -109,6 +109,34 @@ describe(test, "Logical/arithmetic commands", () => {
       `,
     );
   });
+
+  it("lt", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "lt",
+      }),
+      multiline.stripIndent`
+        // lt
+        @SP
+        AM=M-1
+        D=M
+        A=A-1
+        D=M-D
+        @CASE_LESS_THAN_4
+        D;JLT
+        @SP
+        A=M-1
+        M=0
+        @END_CASE_HANDLING_5
+        0;JMP
+        (CASE_LESS_THAN_4)
+        @SP
+        A=M-1
+        M=1
+        (END_CASE_HANDLING_5)
+      `,
+    );
+  });
 });
 
 describe(test, "Segment commands", () => {

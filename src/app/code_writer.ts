@@ -132,8 +132,35 @@ export function writeCommand(
     `;
   }
 
+  if (command === "lt") {
+    const caseLessThan = `CASE_LESS_THAN_${labelCount}`;
+    labelCount++;
+    const endCaseLabel = `END_CASE_HANDLING_${labelCount}`;
+    labelCount++;
+
+    return multiline.stripIndent`
+      // lt
+      @SP
+      AM=M-1
+      D=M
+      A=A-1
+      D=M-D
+      @${caseLessThan}
+      D;JLT
+      @SP
+      A=M-1
+      M=0
+      @${endCaseLabel}
+      0;JMP
+      (${caseLessThan})
+      @SP
+      A=M-1
+      M=1
+      (${endCaseLabel})
+    `;
+  }
+
   /*
-  "lt",
   "and",
   "or",
   "not",
