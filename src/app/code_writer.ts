@@ -160,13 +160,40 @@ export function writeCommand(
     `;
   }
 
-  /*
-  "and",
-  "or",
-  "not",
-  */
+  if (command === "and") {
+    return multiline.stripIndent`
+      // and
+      @SP
+      AM=M-1
+      D=M
+      A=A-1
+      M=D&M
+    `;
+  }
 
-  return `// ${command}`;
+  if (command === "or") {
+    return multiline.stripIndent`
+      // or
+      @SP
+      AM=M-1
+      D=M
+      A=A-1
+      M=D|M
+    `;
+  }
+
+  if (command === "not") {
+    return multiline.stripIndent`
+      // not
+      @SP
+      A=M-1
+      M=!M
+    `;
+  }
+
+  throw new Error(
+    `Unhandled command: ${JSON.stringify(parsedCommand, null, 2)}`,
+  );
 }
 
 function handlePushOrPopCommand(parsedCommand: parser.PushOrPopCommandResult) {

@@ -137,6 +137,52 @@ describe(test, "Logical/arithmetic commands", () => {
       `,
     );
   });
+
+  it("and", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "and",
+      }),
+      multiline.stripIndent`
+        // and
+        @SP
+        AM=M-1
+        D=M
+        A=A-1
+        M=D&M
+      `,
+    );
+  });
+
+  it("or", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "or",
+      }),
+      multiline.stripIndent`
+        // or
+        @SP
+        AM=M-1
+        D=M
+        A=A-1
+        M=D|M
+      `,
+    );
+  });
+
+  it("not", () => {
+    assertStrictEquals(
+      codeWriter.writeCommand({
+        command: "not",
+      }),
+      multiline.stripIndent`
+        // not
+        @SP
+        A=M-1
+        M=!M
+      `,
+    );
+  });
 });
 
 describe(test, "Segment commands", () => {
