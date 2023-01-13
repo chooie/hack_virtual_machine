@@ -37,19 +37,28 @@ export type ArithmeticOrLogicalCommandResult = {
   command: ArithmeticOrLogicalCommand;
 };
 
-export function parse(lineCommands: string) {
-  const lines = lineCommands.split("\n");
+export function parse(
+  lineCommands: string,
+): Array<PushOrPopCommandResult | ArithmeticOrLogicalCommandResult | string> {
+  const lines = lineCommands.split(
+    // Cross-platform line-break
+    /\r?\n/,
+  );
   return lines.map(parseLine);
 }
 
 export function parseLine(
   lineCommand: string,
-): PushOrPopCommandResult | ArithmeticOrLogicalCommandResult {
+): PushOrPopCommandResult | ArithmeticOrLogicalCommandResult | string {
+  if (isAComment(lineCommand) || isEmptyLine(lineCommand)) {
+    return lineCommand;
+  }
+
   const words = lineCommand.split(" ");
   const command = words[0];
 
   if (!isAValidCommand(command)) {
-    throw new Error(`Command not implemented, '${command}'`);
+    throw new Error(`Command not implemented, '${JSON.stringify(command)}'`);
   }
 
   if (command === "push") {
@@ -89,6 +98,14 @@ export function parseLine(
   }
 
   throw new Error("Something went wrong");
+}
+
+function isEmptyLine(lineCommand: string) {
+  return lineCommand.trim() === "";
+}
+
+function isAComment(lineCommand: string) {
+  return lineCommand[0] === "/" && lineCommand[1] === "/";
 }
 
 function isAValidCommand(command: string): command is Command {

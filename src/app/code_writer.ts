@@ -37,8 +37,14 @@ let labelCount = 0;
 export function writeCommand(
   parsedCommand:
     | parser.ArithmeticOrLogicalCommandResult
-    | parser.PushOrPopCommandResult,
+    | parser.PushOrPopCommandResult
+    | string,
 ) {
+  if (typeof parsedCommand === "string") {
+    // It's just a comment
+    return parsedCommand;
+  }
+
   const { command } = parsedCommand;
 
   if (command === "push" || command === "pop") {
@@ -99,7 +105,7 @@ export function writeCommand(
       (${caseEqualLabel})
       @SP
       A=M-1
-      M=1
+      M=-1
       (${endCaseLabel})
     `;
   }
@@ -127,7 +133,7 @@ export function writeCommand(
       (${caseGreaterThan})
       @SP
       A=M-1
-      M=1
+      M=-1
       (${endCaseLabel})
     `;
   }
@@ -155,7 +161,7 @@ export function writeCommand(
       (${caseLessThan})
       @SP
       A=M-1
-      M=1
+      M=-1
       (${endCaseLabel})
     `;
   }
@@ -199,20 +205,28 @@ export function writeCommand(
 function handlePushOrPopCommand(parsedCommand: parser.PushOrPopCommandResult) {
   const { command, segment, value } = parsedCommand;
 
-  if (command === "push") {
-    if (segment === "constant") {
-      return multiline.stripIndent`
-        // ${command} ${segment} ${value}
-        @${value}
-        D=A
-        @${REGISTERS.stackPointer}
-        A=M
-        M=D
-        @${REGISTERS.stackPointer}
-        M=M+1
-      `;
-    }
+  if (value < 0) {
+    throw new Error(
+      `Only non-negative integers allowed. Got: ${
+        (JSON.stringify(parsedCommand), null, 2)
+      }`,
+    );
+  }
 
+  if (command === "push" && segment === "constant") {
+    return multiline.stripIndent`
+      // ${command} ${segment} ${value}
+      @${value}
+      D=A
+      @${REGISTERS.stackPointer}
+      A=M
+      M=D
+      @${REGISTERS.stackPointer}
+      M=M+1
+    `;
+  }
+
+  if (command === "push") {
     if (segment === "pointer") {
       if (value !== 0 && value !== 1) {
         throw new Error(

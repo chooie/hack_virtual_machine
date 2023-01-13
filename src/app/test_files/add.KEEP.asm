@@ -1,3 +1,6 @@
+// Supports comments
+// And empty new lines
+
 // push constant 2
 @2
 D=A

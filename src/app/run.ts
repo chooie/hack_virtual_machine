@@ -23,13 +23,14 @@ if (file.isReadTextFileError(sourceCode)) {
   throw new Error(JSON.stringify(sourceCode, undefined, 2));
 }
 
-console.log("Reading file");
-console.log(sourceCode);
+console.log("Reading file...");
 
 const vmCode = convertVmCode(sourceCode);
 
 const destinationFilePath = file.getDestinationFilePath(filePath, ".asm");
 await file.writeTextFile(destinationFilePath, vmCode);
+
+console.log(`Output to: ${destinationFilePath}`);
 
 function convertVmCode(code: string) {
   const parsedCommands = parser.parse(code);

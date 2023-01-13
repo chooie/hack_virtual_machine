@@ -55,6 +55,8 @@ describe(test, "Logical/arithmetic commands", () => {
   });
 
   it("eq", () => {
+    // TRUE is represented as -1
+    // FALSE is represented as 0
     assertStrictEquals(
       codeWriter.writeCommand({
         command: "eq",
@@ -76,7 +78,7 @@ describe(test, "Logical/arithmetic commands", () => {
         (CASE_EQUAL_0)
         @SP
         A=M-1
-        M=1
+        M=-1
         (END_CASE_HANDLING_1)
       `,
     );
@@ -104,7 +106,7 @@ describe(test, "Logical/arithmetic commands", () => {
         (CASE_GREATER_THAN_2)
         @SP
         A=M-1
-        M=1
+        M=-1
         (END_CASE_HANDLING_3)
       `,
     );
@@ -132,7 +134,7 @@ describe(test, "Logical/arithmetic commands", () => {
         (CASE_LESS_THAN_4)
         @SP
         A=M-1
-        M=1
+        M=-1
         (END_CASE_HANDLING_5)
       `,
     );

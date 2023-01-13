@@ -105,7 +105,7 @@ describe("Parser", () => {
         parser.parseLine("foo");
       },
       Error,
-      "Command not implemented, 'foo'",
+      "Command not implemented, '\"foo\"'",
     );
   });
 });
