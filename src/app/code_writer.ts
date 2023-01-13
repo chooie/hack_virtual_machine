@@ -36,10 +36,10 @@ let labelCount = 0;
 
 export function writeCommand(
   parsedCommand:
-    | parser.ArithmeticOrLogicalCommandResult
-    | parser.PushOrPopCommandResult
+    | parser.ParsedArithmeticOrLogicalCommand
+    | parser.ParsedPushOrPopCommand
     | string,
-) {
+): string {
   if (typeof parsedCommand === "string") {
     // It's just a comment
     return parsedCommand;
@@ -202,7 +202,7 @@ export function writeCommand(
   );
 }
 
-function handlePushOrPopCommand(parsedCommand: parser.PushOrPopCommandResult) {
+function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
   const { command, segment, value } = parsedCommand;
 
   if (value < 0) {
@@ -226,8 +226,8 @@ function handlePushOrPopCommand(parsedCommand: parser.PushOrPopCommandResult) {
     `;
   }
 
-  if (command === "push") {
-    if (segment === "pointer") {
+  if (segment === "pointer") {
+    if (command === "push") {
       if (value !== 0 && value !== 1) {
         throw new Error(
           `Value must equal 0 or 1, to correspond to 'THIS' or 'THAT'. Was: ${value}`,

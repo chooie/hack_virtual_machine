@@ -27,19 +27,19 @@ const segments = [
 ] as const;
 type Segment = typeof segments[number];
 
-export type PushOrPopCommandResult = {
+export type ParsedPushOrPopCommand = {
   command: "push" | "pop";
   segment: Segment;
   value: number;
 };
 
-export type ArithmeticOrLogicalCommandResult = {
+export type ParsedArithmeticOrLogicalCommand = {
   command: ArithmeticOrLogicalCommand;
 };
 
 export function parse(
   lineCommands: string,
-): Array<PushOrPopCommandResult | ArithmeticOrLogicalCommandResult | string> {
+): Array<ParsedPushOrPopCommand | ParsedArithmeticOrLogicalCommand | string> {
   const lines = lineCommands.split(
     // Cross-platform line-break
     /\r?\n/,
@@ -49,7 +49,7 @@ export function parse(
 
 export function parseLine(
   lineCommand: string,
-): PushOrPopCommandResult | ArithmeticOrLogicalCommandResult | string {
+): ParsedPushOrPopCommand | ParsedArithmeticOrLogicalCommand | string {
   if (isAComment(lineCommand) || isEmptyLine(lineCommand)) {
     return lineCommand;
   }

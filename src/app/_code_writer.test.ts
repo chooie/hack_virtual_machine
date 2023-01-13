@@ -189,8 +189,8 @@ describe(test, "Logical/arithmetic commands", () => {
 
 describe(test, "Segment commands", () => {
   describe("constant", () => {
-    // TODO: handle negative numbers
-
+    // REMINDER: the VM translator does not support negative numbers like
+    //           `push constant -10`
     it("push", () => {
       assertStrictEquals(
         codeWriter.writeCommand({
@@ -211,6 +211,15 @@ describe(test, "Segment commands", () => {
       );
     });
   });
+
+  // local
+  // argument
+  // this
+  // that
+
+  // Next, handle the pointer and temp segments, in particular allowing modification of the bases of the this and that segments.
+
+  //
 
   // it("push pointer", () => {
   //   assertStrictEquals(
