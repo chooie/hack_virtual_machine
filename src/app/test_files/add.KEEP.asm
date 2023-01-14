@@ -5,18 +5,16 @@
 @2
 D=A
 @SP
-A=M
-M=D
-@SP
 M=M+1
+A=M-1
+M=D
 // push constant 3
 @3
 D=A
 @SP
-A=M
-M=D
-@SP
 M=M+1
+A=M-1
+M=D
 // add
 @SP
 AM=M-1

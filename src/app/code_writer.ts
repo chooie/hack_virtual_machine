@@ -213,38 +213,135 @@ function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
     );
   }
 
-  if (command === "push" && segment === "constant") {
+  const commandComment = `// ${command} ${segment} ${value}`;
+
+  if (segment === "constant" && command === "push") {
     return multiline.stripIndent`
-      // ${command} ${segment} ${value}
+      ${commandComment}
       @${value}
       D=A
-      @${REGISTERS.stackPointer}
-      A=M
-      M=D
-      @${REGISTERS.stackPointer}
+      @SP
       M=M+1
+      A=M-1
+      M=D
     `;
   }
 
-  if (segment === "pointer") {
+  if (
+    segment === "local" ||
+    segment === "argument" ||
+    segment === "this" ||
+    segment === "that"
+  ) {
+    const segmentSymbol = REGISTERS[segment];
+
     if (command === "push") {
-      if (value !== 0 && value !== 1) {
-        throw new Error(
-          `Value must equal 0 or 1, to correspond to 'THIS' or 'THAT'. Was: ${value}`,
-        );
-      }
-
-      const valueSymbol = value === 0 ? REGISTERS.this : REGISTERS.that;
-
       return multiline.stripIndent`
-        // ${command} ${segment} ${value}
+        ${commandComment}
+        @${value}
+        D=A
+        @${segmentSymbol}
+        D=D+M
+        A=D
+        D=M
+        @SP
+        AM=M+1
+        M=D
+      `;
+    }
+
+    if (command === "pop") {
+      return multiline.stripIndent`
+        ${commandComment}
+        @${value}
+        D=A
+        @${segmentSymbol}
+        D=D+M
+        @R13
+        M=D
+        @SP
+        AM=M-1
+        D=M
+        @R13
+        A=M
+        M=D
+      `;
+    }
+  }
+
+  if (segment === "pointer") {
+    if (value !== 0 && value !== 1) {
+      throw new Error(
+        `Value must equal 0 or 1, to correspond to 'THIS' or 'THAT'. Was: ${value}`,
+      );
+    }
+
+    const valueSymbol = value === 0 ? REGISTERS.this : REGISTERS.that;
+
+    if (command === "push") {
+      return multiline.stripIndent`
+        ${commandComment}
         @${valueSymbol}
         D=M
         @${REGISTERS.stackPointer}
+        M=M+1
+        A=M-1
+        M=D
+      `;
+    }
+
+    if (command === "pop") {
+      return multiline.stripIndent`
+        ${commandComment}
+        @SP
+        AM=M-1
+        D=M
+        @${valueSymbol}
+        M=D
+      `;
+    }
+  }
+
+  if (segment === "temp") {
+    if (value > 7) {
+      throw new Error(
+        `Used a value greater than 7 in command: ${JSON.stringify(
+          parsedCommand,
+          null,
+          2,
+        )}`,
+      );
+    }
+
+    if (command === "push") {
+      return multiline.stripIndent`
+        ${commandComment}
+        @${value}
+        D=A
+        @${REGISTERS.temp}
+        D=D+M
+        A=D
+        D=M
+        @SP
+        AM=M+1
+        M=D
+      `;
+    }
+    if (command === "pop") {
+      return multiline.stripIndent`
+        ${commandComment}
+        @${value}
+        D=A
+        @${REGISTERS.temp}
+        D=D+M
+        @R13
+        M=D
+        @SP
+        AM=M-1
+        D=M
+        @R13
         A=M
         M=D
-        @${REGISTERS.stackPointer}
-        M=M+1
       `;
     }
   }

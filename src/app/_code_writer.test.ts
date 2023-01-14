@@ -1,4 +1,4 @@
-import { assertStrictEquals } from "@test_deps/assert.ts";
+import { assertStrictEquals, assertThrows } from "@test_deps/assert.ts";
 import { describe, it } from "@test_deps/bdd.ts";
 
 import * as multiline from "@utils/multiline.ts";
@@ -203,79 +203,404 @@ describe(test, "Segment commands", () => {
           @10
           D=A
           @SP
-          A=M
-          M=D
-          @SP
           M=M+1
+          A=M-1
+          M=D
         `,
       );
     });
   });
 
-  // local
-  // argument
-  // this
-  // that
+  describe("local", () => {
+    it("push", () => {
+      assertStrictEquals(
+        codeWriter.writeCommand({
+          command: "push",
+          segment: "local",
+          value: 10,
+        }),
+        [
+          "// push local 10",
+          // Get LCL + 10
+          "@10",
+          "D=A",
+          "@LCL",
+          "D=D+M",
+          // D <- RAM[LCL + 10]
+          "A=D",
+          "D=M",
+          // Increment the stack and go to that address
+          "@SP",
+          "AM=M+1",
+          "M=D",
+        ].join("\n"),
+      );
+    });
 
-  // Next, handle the pointer and temp segments, in particular allowing modification of the bases of the this and that segments.
+    it("pop", () => {
+      assertStrictEquals(
+        codeWriter.writeCommand({
+          command: "pop",
+          segment: "local",
+          value: 10,
+        }),
+        [
+          "// pop local 10",
+          // Get LCL + 10
+          "@10",
+          "D=A",
+          "@LCL",
+          "D=D+M",
+          // Store address in R13
+          "@R13",
+          "M=D",
+          // Decrement stack pointer and go to address
+          "@SP",
+          "AM=M-1",
+          // Get value from stack
+          "D=M",
+          // Get address from R13 and set it to stack value
+          "@R13",
+          "A=M",
+          "M=D",
+        ].join("\n"),
+      );
+    });
 
-  //
+    describe("argument", () => {
+      it("push", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "push",
+            segment: "argument",
+            value: 10,
+          }),
+          [
+            "// push argument 10",
+            // Get ARG + 10
+            "@10",
+            "D=A",
+            "@ARG",
+            "D=D+M",
+            // D <- RAM[ARG + 10]
+            "A=D",
+            "D=M",
+            // Increment the stack and go to that address
+            "@SP",
+            "AM=M+1",
+            "M=D",
+          ].join("\n"),
+        );
+      });
 
-  // it("push pointer", () => {
-  //   assertStrictEquals(
-  //     codeWriter.writeCommand({
-  //       command: "push",
-  //       segment: "pointer",
-  //       value: 0,
-  //     }),
-  //     multiline.stripIndent`
-  //       // push pointer 0
-  //       @THIS
-  //       D=M
-  //       @SP
-  //       A=M
-  //       M=D
-  //       @SP
-  //       M=M+1
-  //     `,
-  //   );
+      it("pop", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "pop",
+            segment: "argument",
+            value: 10,
+          }),
+          [
+            "// pop argument 10",
+            // Get ARG + 10
+            "@10",
+            "D=A",
+            "@ARG",
+            "D=D+M",
+            // Store address in R13
+            "@R13",
+            "M=D",
+            // Decrement stack pointer and go to address
+            "@SP",
+            "AM=M-1",
+            // Get value from stack
+            "D=M",
+            // Get address from R13 and set it to stack value
+            "@R13",
+            "A=M",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+    });
 
-  //   assertStrictEquals(
-  //     codeWriter.writeCommand({
-  //       command: "push",
-  //       segment: "pointer",
-  //       value: 1,
-  //     }),
-  //     multiline.stripIndent`
-  //       // push pointer 1
-  //       @THAT
-  //       D=M
-  //       @SP
-  //       A=M
-  //       M=D
-  //       @SP
-  //       M=M+1
-  //     `,
-  //   );
-  // });
+    describe("this", () => {
+      it("push", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "push",
+            segment: "this",
+            value: 10,
+          }),
+          [
+            "// push this 10",
+            // Get THIS + 10
+            "@10",
+            "D=A",
+            "@THIS",
+            "D=D+M",
+            // D <- RAM[THIS + 10]
+            "A=D",
+            "D=M",
+            // Increment the stack and go to that address
+            "@SP",
+            "AM=M+1",
+            "M=D",
+          ].join("\n"),
+        );
+      });
 
-  // it("push argument", () => {
-  //   assertStrictEquals(
-  //     codeWriter.writeCommand({
-  //       command: "push",
-  //       segment: "argument",
-  //       value: 0,
-  //     }),
-  //     multiline.stripIndent`
-  //       // push argument 0
-  //       @THIS
-  //       D=M
-  //       @SP
-  //       A=M
-  //       M=D
-  //       @SP
-  //       M=M+1
-  //     `,
-  //   );
-  // });
+      it("pop", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "pop",
+            segment: "this",
+            value: 10,
+          }),
+          [
+            "// pop this 10",
+            // Get THIS + 10
+            "@10",
+            "D=A",
+            "@THIS",
+            "D=D+M",
+            // Store address in R13
+            "@R13",
+            "M=D",
+            // Decrement stack pointer and go to address
+            "@SP",
+            "AM=M-1",
+            // Get value from stack
+            "D=M",
+            // Get address from R13 and set it to stack value
+            "@R13",
+            "A=M",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+    });
+
+    describe("that", () => {
+      it("push", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "push",
+            segment: "that",
+            value: 10,
+          }),
+          [
+            "// push that 10",
+            // Get THAT + 10
+            "@10",
+            "D=A",
+            "@THAT",
+            "D=D+M",
+            // D <- RAM[THAT + 10]
+            "A=D",
+            "D=M",
+            // Increment the stack and go to that address
+            "@SP",
+            "AM=M+1",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("pop", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "pop",
+            segment: "that",
+            value: 10,
+          }),
+          [
+            "// pop that 10",
+            // Get THAT + 10
+            "@10",
+            "D=A",
+            "@THAT",
+            "D=D+M",
+            // Store address in R13
+            "@R13",
+            "M=D",
+            // Decrement stack pointer and go to address
+            "@SP",
+            "AM=M-1",
+            // Get value from stack
+            "D=M",
+            // Get address from R13 and set it to stack value
+            "@R13",
+            "A=M",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+    });
+
+    describe("pointer", () => {
+      it("push THIS", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "push",
+            segment: "pointer",
+            value: 0,
+          }),
+          [
+            "// push pointer 0",
+            "@THIS",
+            "D=M",
+            "@SP",
+            "M=M+1",
+            "A=M-1",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("push THAT", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "push",
+            segment: "pointer",
+            value: 1,
+          }),
+          [
+            "// push pointer 1",
+            "@THAT",
+            "D=M",
+            "@SP",
+            "M=M+1",
+            "A=M-1",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("pop THIS", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "pop",
+            segment: "pointer",
+            value: 0,
+          }),
+          // deno-fmt-ignore
+          // prettier-ignore
+          [
+            "// pop pointer 0",
+            "@SP",
+            "AM=M-1",
+            "D=M",
+            "@THIS",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("pop THAT", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "pop",
+            segment: "pointer",
+            value: 1,
+          }),
+          // deno-fmt-ignore
+          // prettier-ignore
+          [
+            "// pop pointer 1",
+            "@SP",
+            "AM=M-1",
+            "D=M",
+            "@THAT",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("Fails when a pointer index other than 0 or 1 is used", () => {
+        assertThrows(
+          () => {
+            codeWriter.writeCommand({
+              command: "pop",
+              segment: "pointer",
+              value: 2,
+            });
+          },
+          Error,
+          "Value must equal 0 or 1",
+        );
+      });
+    });
+
+    describe("temp", () => {
+      it("push", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "push",
+            segment: "temp",
+            value: 1,
+          }),
+          [
+            "// push temp 1",
+            // Get TEMP + 1
+            "@1",
+            "D=A",
+            "@TEMP",
+            "D=D+M",
+            // D <- RAM[TEMP + 1]
+            "A=D",
+            "D=M",
+            // Increment the stack and go to that address
+            "@SP",
+            "AM=M+1",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("pop", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand({
+            command: "pop",
+            segment: "temp",
+            value: 1,
+          }),
+          [
+            "// pop temp 1",
+            // Get TEMP + 1
+            "@1",
+            "D=A",
+            "@TEMP",
+            "D=D+M",
+            // Store address in R13
+            "@R13",
+            "M=D",
+            // Decrement stack pointer and go to address
+            "@SP",
+            "AM=M-1",
+            // Get value from stack
+            "D=M",
+            // Get address from R13 and set it to stack value
+            "@R13",
+            "A=M",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("fails on indexes greater than 7", () => {
+        assertThrows(
+          () => {
+            codeWriter.writeCommand({
+              command: "pop",
+              segment: "temp",
+              value: 8,
+            });
+          },
+          Error,
+          "Used a value greater than 7",
+        );
+      });
+    });
+  });
 });
