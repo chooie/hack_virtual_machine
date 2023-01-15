@@ -223,7 +223,7 @@ describe(test, "Segment commands", () => {
           "// push local 10",
           // Go to RAM[LCL + 10]
           "@LCL",
-          "D=A",
+          "D=M",
           "@10",
           "A=D+A",
           // D <- value in RAM[LCL + 10]
@@ -280,7 +280,7 @@ describe(test, "Segment commands", () => {
             "// push argument 10",
             // Get ARG + 10
             "@ARG",
-            "D=A",
+            "D=M",
             "@10",
             "A=D+A",
             // D <- RAM[ARG + 10]
@@ -338,7 +338,7 @@ describe(test, "Segment commands", () => {
             "// push this 10",
             // Get THIS + 10
             "@THIS",
-            "D=A",
+            "D=M",
             "@10",
             "A=D+A",
             // D <- RAM[THIS + 10]
@@ -396,7 +396,7 @@ describe(test, "Segment commands", () => {
             "// push that 10",
             // Get THAT + 10
             "@THAT",
-            "D=A",
+            "D=M",
             "@10",
             "A=D+A",
             // D <- RAM[THAT + 10]

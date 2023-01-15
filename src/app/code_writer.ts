@@ -243,7 +243,7 @@ function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
       return multiline.stripIndent`
         ${commandComment}
         @${segmentSymbol}
-        D=A
+        D=M
         @${value}
         A=D+A
         D=M
