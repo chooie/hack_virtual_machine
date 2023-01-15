@@ -357,6 +357,12 @@ function handlePushOrPopCommand(
   }
 
   if (segment === "static") {
+    // Note this segment is handled very differently to the others See:
+    // http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/Static-Segment-naming-convention-td4025277i20.html
+    // We're not directly handling the memory, but letting the assembler do it
+    // for us. We're doing a simple mapping:
+    // push static 1 -> @<fileName>.1
+
     if (value > 239) {
       throw new Error(
         `Used a value greater than 239 in command: ${JSON.stringify(
