@@ -547,16 +547,17 @@ describe(test, "Segment commands", () => {
           [
             "// push temp 1",
             // Get TEMP + 1
-            "@1",
+            "@5",
             "D=A",
-            "@TEMP",
-            "D=D+M",
+            "@1",
+            "D=D+A",
             // D <- RAM[TEMP + 1]
             "A=D",
             "D=M",
             // Increment the stack and go to that address
             "@SP",
-            "AM=M+1",
+            "M=M+1",
+            "A=M-1",
             "M=D",
           ].join("\n"),
         );
@@ -572,10 +573,10 @@ describe(test, "Segment commands", () => {
           [
             "// pop temp 1",
             // Get TEMP + 1
-            "@1",
+            "@5",
             "D=A",
-            "@TEMP",
-            "D=D+M",
+            "@1",
+            "D=D+A",
             // Store address in R13
             "@R13",
             "M=D",
