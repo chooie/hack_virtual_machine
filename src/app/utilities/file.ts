@@ -16,6 +16,13 @@ export function getDestinationFilePath(
   return `${filePathLessFile}/${fileNameWithoutExtension}${outputFileExtension}`;
 }
 
+export function getFileNameWithoutExtension(filePath: string) {
+  const segments = filePath.split("/");
+  const fileName = segments[segments.length - 1];
+  const fileNameWithoutExtension = fileName.split(".")[0];
+  return fileNameWithoutExtension;
+}
+
 export async function readTextFile(
   absolutePath: string,
 ): Promise<string | ReadTextFileError> {

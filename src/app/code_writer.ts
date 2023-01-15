@@ -39,6 +39,7 @@ import * as parser from "./parser.ts";
 let labelCount = 0;
 
 export function writeCommand(
+  VM_fileNameLessExtension: string,
   parsedCommand:
     | parser.ParsedArithmeticOrLogicalCommand
     | parser.ParsedPushOrPopCommand
@@ -52,7 +53,7 @@ export function writeCommand(
   const { command } = parsedCommand;
 
   if (command === "push" || command === "pop") {
-    return handlePushOrPopCommand(parsedCommand);
+    return handlePushOrPopCommand(VM_fileNameLessExtension, parsedCommand);
   }
 
   if (command === "add") {
@@ -206,7 +207,10 @@ export function writeCommand(
   );
 }
 
-function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
+function handlePushOrPopCommand(
+  VM_fileNameLessExtension: string,
+  parsedCommand: parser.ParsedPushOrPopCommand,
+) {
   const { command, segment, value } = parsedCommand;
 
   if (value < 0) {
@@ -352,24 +356,42 @@ function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
     }
   }
 
+  if (segment === "static") {
+    if (value > 239) {
+      throw new Error(
+        `Used a value greater than 239 in command: ${JSON.stringify(
+          parsedCommand,
+          null,
+          2,
+        )}`,
+      );
+    }
+
+    if (command === "push") {
+      return multiline.stripIndent`
+        ${commandComment}
+        @${VM_fileNameLessExtension}.${value}
+        D=M
+        @SP
+        M=M+1
+        A=M-1
+        M=D
+      `;
+    }
+
+    if (command === "pop") {
+      return multiline.stripIndent`
+        ${commandComment}
+        @SP
+        AM=M-1
+        D=M
+        @${VM_fileNameLessExtension}.${value}
+        M=D
+      `;
+    }
+  }
+
   throw new Error(
     `Unhandled command: ${JSON.stringify(parsedCommand, null, 2)}`,
   );
 }
-
-/*
-SP:	0	266
-
-256	-1
-257	0
-258	0
-259	0
-260	-1
-261	0
-262	-1
-263	0
-264	0
-265	-91
-266	82
-267	112
-*/

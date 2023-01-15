@@ -25,16 +25,19 @@ if (file.isReadTextFileError(sourceCode)) {
 
 console.log("Reading file...");
 
-const vmCode = convertVmCode(sourceCode);
+const vmCode = convertVmCode(filePath, sourceCode);
 
 const destinationFilePath = file.getDestinationFilePath(filePath, ".asm");
 await file.writeTextFile(destinationFilePath, vmCode);
 
 console.log(`Output to: ${destinationFilePath}`);
 
-function convertVmCode(code: string) {
+function convertVmCode(filePath: string, code: string) {
   const parsedCommands = parser.parse(code);
-  const assemblyCode = parsedCommands.map(codeWriter.writeCommand);
+  const fileNameWithoutExtension = file.getFileNameWithoutExtension(filePath);
+  const assemblyCode = parsedCommands.map((parsedCommand) => {
+    return codeWriter.writeCommand(fileNameWithoutExtension, parsedCommand);
+  });
 
   // Every program ends with a termination loop
   assemblyCode.push(

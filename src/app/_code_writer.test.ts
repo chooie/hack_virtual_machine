@@ -7,10 +7,12 @@ import * as codeWriter from "./code_writer.ts";
 
 const test = describe("Code Writer");
 
+const VM_FILE_NAME_LESS_EXTENSION = "FooBar";
+
 describe(test, "Logical/arithmetic commands", () => {
   it("add", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "add",
       }),
       multiline.stripIndent`
@@ -26,7 +28,7 @@ describe(test, "Logical/arithmetic commands", () => {
 
   it("sub", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "sub",
       }),
       multiline.stripIndent`
@@ -42,7 +44,7 @@ describe(test, "Logical/arithmetic commands", () => {
 
   it("neg", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "neg",
       }),
       multiline.stripIndent`
@@ -58,7 +60,7 @@ describe(test, "Logical/arithmetic commands", () => {
     // TRUE is represented as -1
     // FALSE is represented as 0
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "eq",
       }),
       multiline.stripIndent`
@@ -86,7 +88,7 @@ describe(test, "Logical/arithmetic commands", () => {
 
   it("gt", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "gt",
       }),
       multiline.stripIndent`
@@ -114,7 +116,7 @@ describe(test, "Logical/arithmetic commands", () => {
 
   it("lt", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "lt",
       }),
       multiline.stripIndent`
@@ -142,7 +144,7 @@ describe(test, "Logical/arithmetic commands", () => {
 
   it("and", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "and",
       }),
       multiline.stripIndent`
@@ -158,7 +160,7 @@ describe(test, "Logical/arithmetic commands", () => {
 
   it("or", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "or",
       }),
       multiline.stripIndent`
@@ -174,7 +176,7 @@ describe(test, "Logical/arithmetic commands", () => {
 
   it("not", () => {
     assertStrictEquals(
-      codeWriter.writeCommand({
+      codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
         command: "not",
       }),
       multiline.stripIndent`
@@ -193,7 +195,7 @@ describe(test, "Segment commands", () => {
     //           `push constant -10`
     it("push", () => {
       assertStrictEquals(
-        codeWriter.writeCommand({
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
           command: "push",
           segment: "constant",
           value: 10,
@@ -214,7 +216,7 @@ describe(test, "Segment commands", () => {
   describe("local", () => {
     it("push", () => {
       assertStrictEquals(
-        codeWriter.writeCommand({
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
           command: "push",
           segment: "local",
           value: 10,
@@ -240,7 +242,7 @@ describe(test, "Segment commands", () => {
 
     it("pop", () => {
       assertStrictEquals(
-        codeWriter.writeCommand({
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
           command: "pop",
           segment: "local",
           value: 10,
@@ -271,7 +273,7 @@ describe(test, "Segment commands", () => {
     describe("argument", () => {
       it("push", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "push",
             segment: "argument",
             value: 10,
@@ -297,7 +299,7 @@ describe(test, "Segment commands", () => {
 
       it("pop", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "pop",
             segment: "argument",
             value: 10,
@@ -329,7 +331,7 @@ describe(test, "Segment commands", () => {
     describe("this", () => {
       it("push", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "push",
             segment: "this",
             value: 10,
@@ -355,7 +357,7 @@ describe(test, "Segment commands", () => {
 
       it("pop", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "pop",
             segment: "this",
             value: 10,
@@ -387,7 +389,7 @@ describe(test, "Segment commands", () => {
     describe("that", () => {
       it("push", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "push",
             segment: "that",
             value: 10,
@@ -413,7 +415,7 @@ describe(test, "Segment commands", () => {
 
       it("pop", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "pop",
             segment: "that",
             value: 10,
@@ -445,7 +447,7 @@ describe(test, "Segment commands", () => {
     describe("pointer", () => {
       it("push THIS", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "push",
             segment: "pointer",
             value: 0,
@@ -464,7 +466,7 @@ describe(test, "Segment commands", () => {
 
       it("push THAT", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "push",
             segment: "pointer",
             value: 1,
@@ -483,7 +485,7 @@ describe(test, "Segment commands", () => {
 
       it("pop THIS", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "pop",
             segment: "pointer",
             value: 0,
@@ -503,7 +505,7 @@ describe(test, "Segment commands", () => {
 
       it("pop THAT", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "pop",
             segment: "pointer",
             value: 1,
@@ -524,7 +526,7 @@ describe(test, "Segment commands", () => {
       it("Fails when a pointer index other than 0 or 1 is used", () => {
         assertThrows(
           () => {
-            codeWriter.writeCommand({
+            codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
               command: "pop",
               segment: "pointer",
               value: 2,
@@ -539,7 +541,7 @@ describe(test, "Segment commands", () => {
     describe("temp", () => {
       it("push", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "push",
             segment: "temp",
             value: 1,
@@ -565,7 +567,7 @@ describe(test, "Segment commands", () => {
 
       it("pop", () => {
         assertStrictEquals(
-          codeWriter.writeCommand({
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
             command: "pop",
             segment: "temp",
             value: 1,
@@ -596,7 +598,7 @@ describe(test, "Segment commands", () => {
       it("fails on indexes greater than 7", () => {
         assertThrows(
           () => {
-            codeWriter.writeCommand({
+            codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
               command: "pop",
               segment: "temp",
               value: 8,
@@ -604,6 +606,64 @@ describe(test, "Segment commands", () => {
           },
           Error,
           "Used a value greater than 7",
+        );
+      });
+    });
+
+    describe("static", () => {
+      it("push", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+            command: "push",
+            segment: "static",
+            value: 1,
+          }),
+
+          // deno-fmt-ignore
+          // prettier-ignore
+          [
+            "// push static 1",
+            "@FooBar.1",
+            "D=M",
+            "@SP",
+            "M=M+1",
+            "A=M-1",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+      it("pop", () => {
+        assertStrictEquals(
+          codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+            command: "pop",
+            segment: "static",
+            value: 2,
+          }),
+
+          // deno-fmt-ignore
+          // prettier-ignore
+          [
+            "// pop static 2",
+            "@SP",
+            "AM=M-1",
+            "D=M",
+            "@FooBar.2",
+            "M=D",
+          ].join("\n"),
+        );
+      });
+
+      it("fails on indexes greater than 239", () => {
+        assertThrows(
+          () => {
+            codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+              command: "push",
+              segment: "static",
+              value: 255,
+            });
+          },
+          Error,
+          "Used a value greater than 239",
         );
       });
     });

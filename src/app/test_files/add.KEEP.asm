@@ -21,6 +21,12 @@ AM=M-1
 D=M
 A=A-1
 M=D+M
+// pop static 0
+@SP
+AM=M-1
+D=M
+@add.0
+M=D
 (END)
   @END
   0;JMP
