@@ -249,9 +249,9 @@ describe(test, "Segment commands", () => {
           "// pop local 10",
           // Get LCL + 10
           "@LCL",
-          "D=A",
+          "D=M",
           "@10",
-          "D=D+M",
+          "D=D+A",
           // Store address in R13
           "@R13",
           "M=D",
@@ -306,9 +306,9 @@ describe(test, "Segment commands", () => {
             "// pop argument 10",
             // Get ARG + 10
             "@ARG",
-            "D=A",
+            "D=M",
             "@10",
-            "D=D+M",
+            "D=D+A",
             // Store address in R13
             "@R13",
             "M=D",
@@ -364,9 +364,9 @@ describe(test, "Segment commands", () => {
             "// pop this 10",
             // Get THIS + 10
             "@THIS",
-            "D=A",
+            "D=M",
             "@10",
-            "D=D+M",
+            "D=D+A",
             // Store address in R13
             "@R13",
             "M=D",
@@ -422,9 +422,9 @@ describe(test, "Segment commands", () => {
             "// pop that 10",
             // Get THAT + 10
             "@THAT",
-            "D=A",
+            "D=M",
             "@10",
-            "D=D+M",
+            "D=D+A",
             // Store address in R13
             "@R13",
             "M=D",
