@@ -238,14 +238,14 @@ function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
     if (command === "push") {
       return multiline.stripIndent`
         ${commandComment}
-        @${value}
-        D=A
         @${segmentSymbol}
-        D=D+M
-        A=D
+        D=A
+        @${value}
+        A=D+A
         D=M
-        @SP
-        AM=M+1
+        @${REGISTERS.stackPointer}
+        M=M+1
+        A=M-1
         M=D
       `;
     }
@@ -253,9 +253,9 @@ function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
     if (command === "pop") {
       return multiline.stripIndent`
         ${commandComment}
-        @${value}
-        D=A
         @${segmentSymbol}
+        D=A
+        @${value}
         D=D+M
         @R13
         M=D
@@ -350,3 +350,20 @@ function handlePushOrPopCommand(parsedCommand: parser.ParsedPushOrPopCommand) {
     `Unhandled command: ${JSON.stringify(parsedCommand, null, 2)}`,
   );
 }
+
+/*
+SP:	0	266
+
+256	-1
+257	0
+258	0
+259	0
+260	-1
+261	0
+262	-1
+263	0
+264	0
+265	-91
+266	82
+267	112
+*/

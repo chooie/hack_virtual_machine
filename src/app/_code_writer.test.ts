@@ -221,17 +221,18 @@ describe(test, "Segment commands", () => {
         }),
         [
           "// push local 10",
-          // Get LCL + 10
-          "@10",
-          "D=A",
+          // Go to RAM[LCL + 10]
           "@LCL",
-          "D=D+M",
-          // D <- RAM[LCL + 10]
-          "A=D",
+          "D=A",
+          "@10",
+          "A=D+A",
+          // D <- value in RAM[LCL + 10]
           "D=M",
-          // Increment the stack and go to that address
+          // Increment the stack
           "@SP",
-          "AM=M+1",
+          "M=M+1",
+          // Store value of RAM[LCL + 10] in RAM[SP]
+          "A=M-1",
           "M=D",
         ].join("\n"),
       );
@@ -247,9 +248,9 @@ describe(test, "Segment commands", () => {
         [
           "// pop local 10",
           // Get LCL + 10
-          "@10",
-          "D=A",
           "@LCL",
+          "D=A",
+          "@10",
           "D=D+M",
           // Store address in R13
           "@R13",
@@ -278,16 +279,17 @@ describe(test, "Segment commands", () => {
           [
             "// push argument 10",
             // Get ARG + 10
-            "@10",
-            "D=A",
             "@ARG",
-            "D=D+M",
+            "D=A",
+            "@10",
+            "A=D+A",
             // D <- RAM[ARG + 10]
-            "A=D",
             "D=M",
-            // Increment the stack and go to that address
+            // Increment the stack
             "@SP",
-            "AM=M+1",
+            "M=M+1",
+            // Store value of RAM[ARG + 10] in RAM[SP]
+            "A=M-1",
             "M=D",
           ].join("\n"),
         );
@@ -303,9 +305,9 @@ describe(test, "Segment commands", () => {
           [
             "// pop argument 10",
             // Get ARG + 10
-            "@10",
-            "D=A",
             "@ARG",
+            "D=A",
+            "@10",
             "D=D+M",
             // Store address in R13
             "@R13",
@@ -335,16 +337,17 @@ describe(test, "Segment commands", () => {
           [
             "// push this 10",
             // Get THIS + 10
-            "@10",
-            "D=A",
             "@THIS",
-            "D=D+M",
+            "D=A",
+            "@10",
+            "A=D+A",
             // D <- RAM[THIS + 10]
-            "A=D",
             "D=M",
-            // Increment the stack and go to that address
+            // Increment the stack
             "@SP",
-            "AM=M+1",
+            "M=M+1",
+            // Store value of RAM[THIS + 10] in RAM[SP]
+            "A=M-1",
             "M=D",
           ].join("\n"),
         );
@@ -360,9 +363,9 @@ describe(test, "Segment commands", () => {
           [
             "// pop this 10",
             // Get THIS + 10
-            "@10",
-            "D=A",
             "@THIS",
+            "D=A",
+            "@10",
             "D=D+M",
             // Store address in R13
             "@R13",
@@ -392,16 +395,17 @@ describe(test, "Segment commands", () => {
           [
             "// push that 10",
             // Get THAT + 10
-            "@10",
-            "D=A",
             "@THAT",
-            "D=D+M",
+            "D=A",
+            "@10",
+            "A=D+A",
             // D <- RAM[THAT + 10]
-            "A=D",
             "D=M",
-            // Increment the stack and go to that address
+            // Increment the stack
             "@SP",
-            "AM=M+1",
+            "M=M+1",
+            // Store value of RAM[THAT + 10] in RAM[SP]
+            "A=M-1",
             "M=D",
           ].join("\n"),
         );
@@ -417,9 +421,9 @@ describe(test, "Segment commands", () => {
           [
             "// pop that 10",
             // Get THAT + 10
-            "@10",
-            "D=A",
             "@THAT",
+            "D=A",
+            "@10",
             "D=D+M",
             // Store address in R13
             "@R13",
