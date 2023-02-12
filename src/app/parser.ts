@@ -12,7 +12,14 @@ const arithmeticOrLogicalCommands = [
   "not",
 ] as const;
 type ArithmeticOrLogicalCommand = typeof arithmeticOrLogicalCommands[number];
-const commands = ["push", "pop", ...arithmeticOrLogicalCommands] as const;
+const commands = [
+  "push",
+  "pop",
+  ...arithmeticOrLogicalCommands,
+  "label",
+  "goto",
+  "if-goto",
+] as const;
 type Command = typeof commands[number];
 
 const segments = [
@@ -37,9 +44,30 @@ export type ParsedArithmeticOrLogicalCommand = {
   command: ArithmeticOrLogicalCommand;
 };
 
-export function parse(
-  lineCommands: string,
-): Array<ParsedPushOrPopCommand | ParsedArithmeticOrLogicalCommand | string> {
+export type ParsedLabelCommand = {
+  command: "label";
+  value: string;
+};
+
+export type ParsedGotoCommand = {
+  command: "goto";
+  value: string;
+};
+
+export type ParsedIfGotoCommand = {
+  command: "if-goto";
+  value: string;
+};
+
+export type Parsed =
+  | ParsedPushOrPopCommand
+  | ParsedArithmeticOrLogicalCommand
+  | ParsedLabelCommand
+  | ParsedGotoCommand
+  | ParsedIfGotoCommand
+  | string;
+
+export function parse(lineCommands: string): Array<Parsed> {
   const lines = lineCommands.split(
     // Cross-platform line-break
     /\r?\n/,
@@ -47,9 +75,7 @@ export function parse(
   return lines.map(parseLine);
 }
 
-export function parseLine(
-  lineCommand: string,
-): ParsedPushOrPopCommand | ParsedArithmeticOrLogicalCommand | string {
+export function parseLine(lineCommand: string): Parsed {
   if (isAComment(lineCommand) || isEmptyLine(lineCommand)) {
     return lineCommand;
   }
@@ -94,6 +120,27 @@ export function parseLine(
   if (isAValidArithmeticOrLogicalCommand(command)) {
     return {
       command,
+    };
+  }
+
+  if (command === "label") {
+    return {
+      command: "label",
+      value: words[1],
+    };
+  }
+
+  if (command === "goto") {
+    return {
+      command: "goto",
+      value: words[1],
+    };
+  }
+
+  if (command === "if-goto") {
+    return {
+      command: "if-goto",
+      value: words[1],
     };
   }
 

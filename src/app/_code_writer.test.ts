@@ -668,4 +668,66 @@ describe(test, "Segment commands", () => {
       });
     });
   });
+
+  describe("label", () => {
+    it("supports label", () => {
+      assertStrictEquals(
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+          command: "label",
+          value: "SOME_LABEL",
+        }),
+
+        // deno-fmt-ignore
+        // prettier-ignore
+        [
+          "// label",
+          "(SOME_LABEL)",
+        ].join("\n"),
+      );
+    });
+  });
+
+  describe("goto", () => {
+    it("supports goto", () => {
+      assertStrictEquals(
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+          command: "goto",
+          value: "SOME_LABEL",
+        }),
+
+        // deno-fmt-ignore
+        // prettier-ignore
+        [
+          "// goto",
+          "@SOME_LABEL",
+          // Unconditional goto
+          "0;JMP"
+        ].join("\n"),
+      );
+    });
+  });
+
+  describe("if-goto", () => {
+    it("supports if-goto", () => {
+      assertStrictEquals(
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+          command: "if-goto",
+          value: "SOME_LABEL",
+        }),
+
+        // deno-fmt-ignore
+        // prettier-ignore
+        [
+          "// if-goto",
+          // Pop off the stack and go to address
+          "@SP",
+          "AM=M-1",
+          "D=M",
+          // If this value is not equal to 0, jump to label
+          "@SOME_LABEL",
+          "D;JNE"
+        ].join("\n"),
+      );
+    });
+  });
 });

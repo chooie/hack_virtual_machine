@@ -40,10 +40,7 @@ let labelCount = 0;
 
 export function writeCommand(
   VM_fileNameLessExtension: string,
-  parsedCommand:
-    | parser.ParsedArithmeticOrLogicalCommand
-    | parser.ParsedPushOrPopCommand
-    | string,
+  parsedCommand: parser.Parsed,
 ): string {
   if (typeof parsedCommand === "string") {
     // It's just a comment
@@ -199,6 +196,35 @@ export function writeCommand(
       @SP
       A=M-1
       M=!M
+    `;
+  }
+
+  if (command === "label") {
+    const { value } = parsedCommand;
+    return multiline.stripIndent`
+      // label
+      (${value})
+    `;
+  }
+
+  if (command === "goto") {
+    const { value } = parsedCommand;
+    return multiline.stripIndent`
+      // goto
+      @${value}
+      0;JMP
+    `;
+  }
+
+  if (command === "if-goto") {
+    const { value } = parsedCommand;
+    return multiline.stripIndent`
+      // if-goto
+      @SP
+      AM=M-1
+      D=M
+      @${value}
+      D;JNE
     `;
   }
 
