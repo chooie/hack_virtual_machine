@@ -228,6 +228,41 @@ export function writeCommand(
     `;
   }
 
+  if (command === "function") {
+    const { functionName, numberOfArguments } = parsedCommand;
+    const loopLabel = `LOOP_${labelCount}`;
+    const stopLabel = `STOP_${labelCount}`;
+    labelCount++;
+
+    return multiline.stripIndent`
+      // function
+      (${functionName})
+      @${numberOfArguments}
+      D=A
+      @R13
+      M=D
+      @R14
+      M=0
+      (${loopLabel})
+      @R13
+      D=M
+      @R14
+      D=M-D
+      @STOP_7
+      D;JGE
+      @R14
+      D=M
+      @LCL
+      A=M+D
+      M=0
+      @R14
+      M=M+1
+      @${loopLabel}
+      0;JMP
+      (${stopLabel})
+    `;
+  }
+
   throw new Error(
     `Unhandled command: ${JSON.stringify(parsedCommand, null, 2)}`,
   );

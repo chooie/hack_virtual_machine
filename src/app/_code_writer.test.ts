@@ -695,13 +695,11 @@ describe(test, "Segment commands", () => {
           value: "SOME_LABEL",
         }),
 
-        // deno-fmt-ignore
-        // prettier-ignore
         [
           "// goto",
           "@SOME_LABEL",
           // Unconditional goto
-          "0;JMP"
+          "0;JMP",
         ].join("\n"),
       );
     });
@@ -715,8 +713,6 @@ describe(test, "Segment commands", () => {
           value: "SOME_LABEL",
         }),
 
-        // deno-fmt-ignore
-        // prettier-ignore
         [
           "// if-goto",
           // Pop off the stack and go to address
@@ -725,7 +721,65 @@ describe(test, "Segment commands", () => {
           "D=M",
           // If this value is not equal to 0, jump to label
           "@SOME_LABEL",
-          "D;JNE"
+          "D;JNE",
+        ].join("\n"),
+      );
+    });
+  });
+
+  describe("function", () => {
+    it("supports function", () => {
+      assertStrictEquals(
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+          command: "function",
+          functionName: "SimpleFunction.test",
+          numberOfArguments: 2,
+        }),
+
+        // deno-fmt-ignore
+        // prettier-ignore
+        [
+          "// function",
+          // Describe symbol for function
+          "(SimpleFunction.test)",
+          // Set R13 to number of arguments
+          "@2",
+          "D=A",
+          "@R13",
+          "M=D",
+
+          // Set R14 to 0 and treat at as iterator (i)
+          "@R14",
+          "M=0",
+
+          // while (i < number of arguments)
+          "(LOOP_6)",
+          "@R13",
+          "D=M",
+          "@R14",
+          "D=M-D",
+
+          // Exit if i - number of arguments >= 0
+          "@STOP_7",
+          "D;JGE",
+
+          // Body of loop sets RAM[LCL + i] to 0
+          "@R14",
+          "D=M",
+          "@LCL",
+          // A = RAM[LCL + i]
+          "A=M+D",
+          "M=0",
+
+          // i++
+          "@R14",
+          "M=M+1",
+
+          // Repeat loop
+          "@LOOP_6",
+          "0;JMP",
+
+          "(STOP_6)",
         ].join("\n"),
       );
     });

@@ -19,6 +19,7 @@ const commands = [
   "label",
   "goto",
   "if-goto",
+  "function",
 ] as const;
 type Command = typeof commands[number];
 
@@ -59,12 +60,19 @@ export type ParsedIfGotoCommand = {
   value: string;
 };
 
+export type ParsedFunctionCommand = {
+  command: "function";
+  functionName: string;
+  numberOfArguments: number;
+};
+
 export type Parsed =
   | ParsedPushOrPopCommand
   | ParsedArithmeticOrLogicalCommand
   | ParsedLabelCommand
   | ParsedGotoCommand
   | ParsedIfGotoCommand
+  | ParsedFunctionCommand
   | string;
 
 export function parse(lineCommands: string): Array<Parsed> {
@@ -142,6 +150,12 @@ export function parseLine(lineCommand: string): Parsed {
       command: "if-goto",
       value: words[1],
     };
+  }
+
+  if (command === "function") {
+    const functionName = words[1];
+    const numberOfArguments = parseInt(words[2]);
+    return { command: "function", functionName, numberOfArguments };
   }
 
   throw new Error("Something went wrong");
