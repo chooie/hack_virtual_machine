@@ -273,7 +273,7 @@ export function writeCommand(
       A=M
       M=D
       @ARG
-      D=M
+      D=M+1
       @SP
       M=D
       @LCL

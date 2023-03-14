@@ -36,15 +36,21 @@ describe("Files", () => {
     assertEquals(actual.attemptedPath, path);
     assertEquals(
       {
-        errorMessage: actual.errorMessage,
         errorType: actual.errorType,
         isError: actual.isError,
       },
       {
-        errorMessage: "No such file or directory (os error 2)",
         errorType: "NotFound",
         isError: true,
       },
+    );
+
+    const expectedStringStart = "No such file or directory (os error 2),";
+
+    assertEquals(
+      actual.errorMessage.startsWith(expectedStringStart),
+      true,
+      `Failed because we expect string, "${actual.errorMessage}", to start with "${expectedStringStart}"`,
     );
   });
 

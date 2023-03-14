@@ -813,7 +813,7 @@ describe(test, "Segment commands", () => {
            * Reposition the stack pointer
            */
           "@ARG",
-          "D=M",
+          "D=M+1",
           "@SP",
           "M=D",
 
@@ -893,6 +893,8 @@ describe(test, "Segment commands", () => {
            * goto retAddr
            */
           "A=D",
+
+          // TODO: investigate why RAM[310] isn't matching in the emulator
         ].join("\n"),
       );
     });
