@@ -248,7 +248,7 @@ export function writeCommand(
       D=M
       @R14
       D=M-D
-      @STOP_7
+      @${stopLabel}
       D;JGE
       @R14
       D=M
@@ -260,6 +260,49 @@ export function writeCommand(
       @${loopLabel}
       0;JMP
       (${stopLabel})
+    `;
+  }
+
+  if (command === "return") {
+    return multiline.stripIndent`
+      // return
+      @SP
+      A=M
+      D=M
+      @ARG
+      A=M
+      M=D
+      @ARG
+      D=M
+      @SP
+      M=D
+      @LCL
+      D=M-1
+      @R13
+      M=D
+      A=D
+      D=M
+      @THAT
+      M=D
+      @R13
+      AM=M-1
+      D=M
+      @THIS
+      M=D
+      @R13
+      AM=M-1
+      D=M
+      @ARG
+      M=D
+      @R13
+      AM=M-1
+      D=M
+      @LCL
+      M=D
+      @R13
+      AM=M-1
+      D=M
+      A=D
     `;
   }
 

@@ -736,8 +736,6 @@ describe(test, "Segment commands", () => {
           numberOfArguments: 2,
         }),
 
-        // deno-fmt-ignore
-        // prettier-ignore
         [
           "// function",
           // Describe symbol for function
@@ -760,7 +758,7 @@ describe(test, "Segment commands", () => {
           "D=M-D",
 
           // Exit if i - number of arguments >= 0
-          "@STOP_7",
+          "@STOP_6",
           "D;JGE",
 
           // Body of loop sets RAM[LCL + i] to 0
@@ -780,6 +778,121 @@ describe(test, "Segment commands", () => {
           "0;JMP",
 
           "(STOP_6)",
+        ].join("\n"),
+      );
+    });
+
+    it("supports return", () => {
+      assertStrictEquals(
+        codeWriter.writeCommand(VM_FILE_NAME_LESS_EXTENSION, {
+          command: "return",
+        }),
+
+        [
+          "// return",
+          /**
+           ** *ARG = pop()
+           *
+           * Pops the return value off the stack and stores it at RAM[ARG] (by
+           * convention, we store the return value at the address of the first
+           * argument)
+           */
+          // Go to the address stored in SP
+          "@SP",
+          "A=M",
+          // Get value in RAM[SP]
+          "D=M",
+          // Store the value of RAM[SP] in RAM[ARG]
+          "@ARG",
+          "A=M",
+          "M=D",
+
+          /**
+           ** *SP = ARG + 1
+           *
+           * Reposition the stack pointer
+           */
+          "@ARG",
+          "D=M",
+          "@SP",
+          "M=D",
+
+          /**
+           ** endFrame = LCL
+           *
+           * Track endFrame so we can use that as a reference to restore what's
+           * in the saved frame
+           */
+          "@LCL",
+          // It's -1 so we can immediately set THAT
+          "D=M-1",
+          // Store endFrame in R13
+          "@R13",
+          "M=D",
+
+          /**
+           ** THAT = *(endFrame - 1)
+           */
+          // Go to endFrame - 1
+          "A=D",
+          // D <- RAM[endFrame - 1]
+          "D=M",
+          // THAT <- D
+          "@THAT",
+          "M=D",
+
+          /**
+           ** THIS = *(endFrame - 2)
+           */
+          // Decrement R13 and goto endFrame - 2
+          "@R13",
+          "AM=M-1",
+          // D <- RAM[endFrame - 2]
+          "D=M",
+
+          // THIS <- D
+          "@THIS",
+          "M=D",
+
+          /**
+           ** ARG = *(endFrame - 3)
+           */
+          // Decrement R13 and goto endFrame - 3
+          "@R13",
+          "AM=M-1",
+          // D <- RAM[endFrame - 3]
+          "D=M",
+
+          // ARG <- D
+          "@ARG",
+          "M=D",
+
+          /**
+           ** LCL = *(endFrame - 4)
+           */
+          // Decrement R13 and goto endFrame - 4
+          "@R13",
+          "AM=M-1",
+          // D <- RAM[endFrame - 4]
+          "D=M",
+
+          // LCL <- D
+          "@LCL",
+          "M=D",
+
+          /**
+           ** retAddr = *(endFrame - 5)
+           */
+          // Decrement R13 and goto endFrame - 5
+          "@R13",
+          "AM=M-1",
+          // D <- RAM[endFrame - 5]
+          "D=M",
+
+          /**
+           * goto retAddr
+           */
+          "A=D",
         ].join("\n"),
       );
     });
